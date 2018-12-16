@@ -6,25 +6,26 @@ services:
      - "5000:5000"
   redis:
     image: "redis:alpine"
-  db:
+  mysql:
     image: mysql
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 'pass'
-      MYSQL_DATABASE: 'db'
+      MYSQL_DATABASE: 'greet'
       MYSQL_USER: 'user'
       MYSQL_PASSWORD: 'pass'
+    volumes:
+      - ./mysql-dump:/docker-entrypoint-initdb.d
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     links: 
-      - db:db
+      - mysql:mysql
     ports:
       - 8000:80
     environment:
       MYSQL_USER: user
       MYSQL_PASSWORD: pass
       MYSQL_ROOT_PASSWORD: pass
-      PMA_HOST: db
-volumes:
-  persistent:
+      PMA_HOST: mysql
+  
